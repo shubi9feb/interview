@@ -1,0 +1,343 @@
+{
+	"info": {
+		"_postman_id": "3ccf6f6a-7dbe-424a-a834-9b08d96c369c",
+		"name": "Task Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27833152"
+	},
+	"item": [
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"admin@gmail.com\",\r\n    \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reactinterviewtask.codetentaclestechnologies.in/api/api/login",
+					"protocol": "https",
+					"host": [
+						"reactinterviewtask",
+						"codetentaclestechnologies",
+						"in"
+					],
+					"path": [
+						"api",
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "ka Janvu",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "Janv1112@example.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Janvu@123",
+							"type": "text"
+						},
+						{
+							"key": "password_confirmation",
+							"value": "Janvu@123",
+							"type": "text"
+						},
+						{
+							"key": "skills",
+							"value": "PHP,Laravel",
+							"type": "text"
+						},
+						{
+							"key": "photo",
+							"type": "file",
+							"src": "/C:/Users/Admin/Downloads/icon-of-user-avatar-for-web-site-or-mobile-app-vector-3125199 (3).jpg"
+						},
+						{
+							"key": "gender",
+							"value": "male",
+							"type": "text"
+						},
+						{
+							"key": "phoneNumber",
+							"value": "8874563230",
+							"type": "text"
+						},
+						{
+							"key": "countryId",
+							"value": "4",
+							"type": "text"
+						},
+						{
+							"key": "stateId",
+							"value": "10",
+							"type": "text"
+						},
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3JlYWN0aW50ZXJ2aWV3dGFzay5jb2RldGVudGFjbGVzdGVjaG5vbG9naWVzLnRlY2gvYXBpL2FwaS9sb2dpbiIsImlhdCI6MTczMTY3MDg2OCwiZXhwIjoxNzMxNjc0NDY4LCJuYmYiOjE3MzE2NzA4NjgsImp0aSI6ImNDMTVwVHZzWmhvRTNHMVIiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.JaM6kAIo3h0wdTGbYxhT0XInODAqU58tKHUSH4gCEEo",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://reactinterviewtask.codetentaclestechnologies.in/api/api/register",
+					"protocol": "https",
+					"host": [
+						"reactinterviewtask",
+						"codetentaclestechnologies",
+						"in"
+					],
+					"path": [
+						"api",
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user-list",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3JlYWN0aW50ZXJ2aWV3dGFzay5jb2RldGVudGFjbGVzdGVjaG5vbG9naWVzLnRlY2gvYXBpL2FwaS9sb2dpbiIsImlhdCI6MTczMTY3MDg2OCwiZXhwIjoxNzMxNjc0NDY4LCJuYmYiOjE3MzE2NzA4NjgsImp0aSI6ImNDMTVwVHZzWmhvRTNHMVIiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.JaM6kAIo3h0wdTGbYxhT0XInODAqU58tKHUSH4gCEEo\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reactinterviewtask.codetentaclestechnologies.in/api/api/user-list",
+					"protocol": "https",
+					"host": [
+						"reactinterviewtask",
+						"codetentaclestechnologies",
+						"in"
+					],
+					"path": [
+						"api",
+						"api",
+						"user-list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user-delete/2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzMxNjY5MTAyLCJleHAiOjE3MzE2NzI3MDIsIm5iZiI6MTczMTY2OTEwMiwianRpIjoienlFRkwxRDBIWGhpUllnWSIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.EQOOTMTAW5CHaCuPIcHujBqWgvp_yeMW5emm0o3qzNA\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reactinterviewtask.codetentaclestechnologies.in/api/api/user-delete/10",
+					"protocol": "https",
+					"host": [
+						"reactinterviewtask",
+						"codetentaclestechnologies",
+						"in"
+					],
+					"path": [
+						"api",
+						"api",
+						"user-delete",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add-product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Product3",
+							"type": "text"
+						},
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/C:/Users/Admin/Downloads/icon-of-user-avatar-for-web-site-or-mobile-app-vector-3125199 (4).jpg"
+						},
+						{
+							"key": "description",
+							"value": "Product1 dec",
+							"type": "text"
+						},
+						{
+							"key": "price",
+							"value": "120",
+							"type": "text"
+						},
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3JlYWN0aW50ZXJ2aWV3dGFzay5jb2RldGVudGFjbGVzdGVjaG5vbG9naWVzLnRlY2gvYXBpL2FwaS9sb2dpbiIsImlhdCI6MTczMTY3MDg2OCwiZXhwIjoxNzMxNjc0NDY4LCJuYmYiOjE3MzE2NzA4NjgsImp0aSI6ImNDMTVwVHZzWmhvRTNHMVIiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.JaM6kAIo3h0wdTGbYxhT0XInODAqU58tKHUSH4gCEEo",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://reactinterviewtask.codetentaclestechnologies.in/api/api/add-product",
+					"protocol": "https",
+					"host": [
+						"reactinterviewtask",
+						"codetentaclestechnologies",
+						"in"
+					],
+					"path": [
+						"api",
+						"api",
+						"add-product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product-list",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3JlYWN0aW50ZXJ2aWV3dGFzay5jb2RldGVudGFjbGVzdGVjaG5vbG9naWVzLnRlY2gvYXBpL2FwaS9sb2dpbiIsImlhdCI6MTczMTY3MjA4NywiZXhwIjoxNzMxNjc1Njg3LCJuYmYiOjE3MzE2NzIwODcsImp0aSI6IjkwdURWcWNMY091RGFKUzUiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.8qnDn_VF9C87qMQAQ85foZE1iUpS0FMahxgD1lW79kg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reactinterviewtask.codetentaclestechnologies.in/api/api/product-list",
+					"protocol": "https",
+					"host": [
+						"reactinterviewtask",
+						"codetentaclestechnologies",
+						"in"
+					],
+					"path": [
+						"api",
+						"api",
+						"product-list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "country-list",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3JlYWN0aW50ZXJ2aWV3dGFzay5jb2RldGVudGFjbGVzdGVjaG5vbG9naWVzLnRlY2gvYXBpL2FwaS9sb2dpbiIsImlhdCI6MTczMTY3MjA4NywiZXhwIjoxNzMxNjc1Njg3LCJuYmYiOjE3MzE2NzIwODcsImp0aSI6IjkwdURWcWNMY091RGFKUzUiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.8qnDn_VF9C87qMQAQ85foZE1iUpS0FMahxgD1lW79kg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reactinterviewtask.codetentaclestechnologies.in/api/api/country-list",
+					"protocol": "https",
+					"host": [
+						"reactinterviewtask",
+						"codetentaclestechnologies",
+						"in"
+					],
+					"path": [
+						"api",
+						"api",
+						"country-list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "state-list",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"country_id\":4,\r\n    \"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3JlYWN0aW50ZXJ2aWV3dGFzay5jb2RldGVudGFjbGVzdGVjaG5vbG9naWVzLnRlY2gvYXBpL2FwaS9sb2dpbiIsImlhdCI6MTczMTY3MjA4NywiZXhwIjoxNzMxNjc1Njg3LCJuYmYiOjE3MzE2NzIwODcsImp0aSI6IjkwdURWcWNMY091RGFKUzUiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.8qnDn_VF9C87qMQAQ85foZE1iUpS0FMahxgD1lW79kg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reactinterviewtask.codetentaclestechnologies.in/api/api/state-list",
+					"protocol": "https",
+					"host": [
+						"reactinterviewtask",
+						"codetentaclestechnologies",
+						"in"
+					],
+					"path": [
+						"api",
+						"api",
+						"state-list"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
