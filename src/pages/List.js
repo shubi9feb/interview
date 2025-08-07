@@ -4,10 +4,13 @@ import Layout from "../component/Layout";
 import { Link } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 import axiosInstance from "../api/axiosInstance.js";
+import { deleteUser } from "../api/apiActions.js";
 export default function List() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const token = localStorage.getItem("token");
 
   // Fetch user list on mount
   useEffect(() => {
@@ -26,6 +29,19 @@ export default function List() {
     fetchUsers();
   }, []);
 
+  const handleDelete = async (userId) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+    try {
+      await deleteUser(userId, token);
+      // Filter out deleted user from state
+      setUsers(users.filter((user) => user.id !== userId));
+      alert("User deleted successfully");
+    } catch (error) {
+      console.error("Delete failed: Check CORS policy", error);
+      alert("Failed to delete user. Please try again.");
+    }
+  };
   if (loading) return <p>Loading users…</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
@@ -61,9 +77,9 @@ export default function List() {
       render: (item) => (
         <>
           <div className="flex gap-1 text-center justify-center">
-            <Link to="#">
+            <button onClick={() => handleDelete(item._id)}>
               <Trash2 color="#ff0000" size={16} />
-            </Link>
+            </button>
           </div>
         </>
       ),

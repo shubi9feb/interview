@@ -33,7 +33,7 @@ export default function Sidebar() {
               )}
             </li>
             <li>
-              {role === "user" && (
+              {(role === "user" || role === "seller") && (
                 <Link
                   to="/Product"
                   className="flex items-center p-2 text-gray-200 rounded-lg dark:text-white hover:text-gray-50 hover:bg-[#432b73] dark:hover:bg-[#432b73] group"

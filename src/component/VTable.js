@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-
 /* eslint-disable react/prop-types */
 const Table = ({
   cols,
@@ -12,7 +11,6 @@ const Table = ({
   totalPages,
   page,
   handlePageChange,
-  handleRowsPerPageChange,
   isTableLoading,
 }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -102,13 +100,13 @@ const Table = ({
   const handleChangeRowsPerPage = (event) => {
     const value = parseInt(event.target.value, 10);
     setRowsPerPage(value);
-    handleRowsPerPageChange(value);
+    // handleRowsPerPageChange(value);
   };
 
   return (
-    <div className="p-2 bg-primaryDarkCards rounded-lg border border-primaryGray-700 overflow-x-auto table-content" >
-      <table className="min-w-full divide-y divide-gray-200 suppportable" >
-       {/* style={{width:"100%", whiteSpace:"nowrap", tableLayout:"fixed"}} */}
+    <div className="p-2 bg-primaryDarkCards rounded-lg border border-primaryGray-700 overflow-x-auto table-content">
+      <table className="min-w-full divide-y divide-gray-200 suppportable">
+        {/* style={{width:"100%", whiteSpace:"nowrap", tableLayout:"fixed"}} */}
 
         <thead>
           <tr>
@@ -119,8 +117,7 @@ const Table = ({
                   cursor: col.sortable ? "pointer" : "default",
                 }}
                 className="px-6 py-3 text-left text-ellipsis text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                onClick={() => (col.sortable ? requestSort(col.key) : null)} 
-                
+                onClick={() => (col.sortable ? requestSort(col.key) : null)}
               >
                 <div className="flex justify-center">
                   {col.title}
@@ -184,8 +181,6 @@ const Table = ({
               <td
                 colSpan={cols?.length}
                 className="px-6 py-4 whitespace-nowrap text-center"
-                
-                
               >
                 <div className="no-data-container">
                   <img
@@ -207,10 +202,13 @@ const Table = ({
                     key={colIndex}
                     className={`px-6 py-4  text-ellipsis text-xs font-medium text-gray-500  tracking-wider   valuesfont  ${
                       col.colored ? "text-gradient font-semibold truncate" : ""
-                    }` }
-                    style={{overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}
+                    }`}
+                    style={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
                   >
-                    
                     {col.render
                       ? col.render(item, rowIndex)
                       : item[col.dataIndex]}

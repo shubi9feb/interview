@@ -18,7 +18,7 @@ export default function Login() {
         const role = res.role.toLowerCase();
         if (role === "admin") {
           navigate("/List");
-        } else {
+        } else if (["user", "seller"].includes(role.toLowerCase())) {
           navigate("/Product");
         }
       } else {
