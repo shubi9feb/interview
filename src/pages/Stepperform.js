@@ -7,6 +7,7 @@ import { Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
 import Layout from "../component/Layout";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 const steps = [
   "Personal Information",
   "Details",
@@ -22,23 +23,24 @@ export default function Stepperform() {
       photoPreview: "",
       name: "",
       gender: "",
-      phone: "",
+      phoneNumber: "",
     },
     credential: { email: "", password: "", passwordConfirmation: "" },
     skills: [],
     country: { countryId: "", stateId: "" },
   });
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   //validations
 
   const validators = [
     // Step 0 — Personal
     () => {
-      const { name, gender, phone, photo } = formData.personal;
+      const { name, gender, phoneNumber, photo } = formData.personal;
       if (!name.trim()) return alert("Full Name is required");
       if (!gender) return alert("Gender is required");
-      if (!phone.trim()) return alert("Phone is required");
+      //   if (!phoneNumber .trim()) return alert("Phone is required");
       //   if (!photo) return alert("Profile photo is required");
       return true;
     },
@@ -71,27 +73,107 @@ export default function Stepperform() {
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-  const handleSubmit = async () => {
-    try {
-      const response = await axios.post(
-        "https://reactinterviewtask.codetentaclestechnologies.in/api/add-user",
-        formData, // 👈 combined data from all steps
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // if token required
-          },
-        }
-      );
 
-      if (response.status === 200 || response.status === 201) {
-        alert("User successfully added!");
-        navigate("/user-list"); // ✅ navigate to list page
+  const handleSubmit = async () => {
+    // debug: see the nested object you logged earlier
+    console.log("SUBMIT - current formData:", formData);
+
+    // Defensive extraction from nested structure
+    const personal = formData.personal || {};
+    const credential = formData.credential || {};
+    const country = formData.country || {};
+    const skillsArr = formData.skills || [];
+
+    const name = personal.name?.trim() ?? "";
+    const email = credential.email?.trim() ?? "";
+    const phoneNumber =
+      personal.phoneNumber?.trim() ?? personal.phone?.trim() ?? "";
+    const password = credential.password ?? "";
+    const password_confirmation =
+      credential.passwordConfirmation ?? credential.password ?? "";
+    const role = credential.role ?? "user";
+    const gender = personal.gender ?? "";
+    const countryId = country.countryId ?? "";
+    const stateId = country.stateId ?? "";
+    const photoFile = personal.photo ?? null;
+    const skills = Array.isArray(skillsArr)
+      ? skillsArr.join(",")
+      : skillsArr || "";
+    const token = localStorage.getItem("token") ?? "";
+
+    const clientErrors = [];
+    if (!name) clientErrors.push("Name is required");
+    if (!email) clientErrors.push("Email is required");
+    if (!phoneNumber) clientErrors.push("phoneNumber  is required");
+    if (!password) clientErrors.push("Password is required");
+    if (!photoFile) clientErrors.push("Profile photo is required");
+
+    if (clientErrors.length) {
+      // show to user (you can use state instead of alert)
+      alert("Please fix: \n" + clientErrors.join("\n"));
+      return;
+    }
+
+    // Build FormData
+    const payload = new FormData();
+    payload.append("name", name);
+    payload.append("email", email);
+    payload.append("phoneNumber", phoneNumber);
+    payload.append("role", role);
+    payload.append("password", password);
+    payload.append("password_confirmation", password_confirmation);
+    payload.append("gender", gender);
+    payload.append("skills", skills);
+    payload.append("countryId", countryId);
+    payload.append("stateId", stateId);
+    if (photoFile) payload.append("photo", photoFile);
+    if (token) payload.append("token", token);
+
+    for (const pair of payload.entries()) {
+      console.log("FormData:", pair[0], pair[1]);
+    }
+
+    try {
+      const url =
+        "https://reactinterviewtask.codetentaclestechnologies.in/api/api/register";
+      const res = await axios.post(url, payload, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      console.log("REGISTER RESPONSE:", res.data);
+      if (res.data?.success) {
+        alert(res.data.message || "Registered successfully");
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+        navigate("/List");
+      } else {
+        alert(res.data?.message || "Unexpected response");
       }
-    } catch (error) {
-      console.error("Submit Error:", error);
-      alert("Something went wrong. Please try again.");
+    } catch (err) {
+      console.error("Submit Error:", err);
+      if (err.response) {
+        console.log("Status:", err.response.status);
+        console.log("Response body:", err.response.data);
+
+        // Extract messages (Laravel style or generic)
+        let messages = [];
+        const data = err.response.data;
+        if (data?.errors && typeof data.errors === "object") {
+          messages = Object.values(data.errors).flat();
+        } else if (Array.isArray(data?.message)) {
+          messages = data.message;
+        } else if (data?.message) {
+          messages = [data.message];
+        } else {
+          messages = [err.message || "Validation failed"];
+        }
+
+        alert(messages.join("\n"));
+      } else {
+        alert(err.message || "Network error");
+      }
     }
   };
+
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
@@ -101,32 +183,19 @@ export default function Stepperform() {
       case 0:
         return (
           <>
-            <Personaldetails
-              personal={formData.personal}
-              setFormData={setFormData}
-            />
+            <Personaldetails formData={formData} setFormData={setFormData} />
           </>
         );
       case 1:
         return (
           <>
-            <Countrydetails
-              formData={formData}
-              setFormData={setFormData}
-              nextStep={handleNext}
-              prevStep={handleBack}
-            />
+            <Countrydetails formData={formData} setFormData={setFormData} />
           </>
         );
       case 2:
         return (
           <>
-            <Skillsdetails
-              formData={formData}
-              setFormData={setFormData}
-              nextStep={handleNext}
-              prevStep={handleBack}
-            />
+            <Skillsdetails formData={formData} setFormData={setFormData} />
           </>
         );
       case 3:
@@ -195,12 +264,12 @@ export default function Stepperform() {
                       variant="contained"
                       color="primary"
                       onClick={() => {
-                        if (!validators[activeStep]()) return; // ✅ run validation first
+                        if (!validators[activeStep]()) return; //  run validation first
 
                         if (activeStep === steps.length - 1) {
-                          handleSubmit(); // ✅ final step — submit to backend
+                          handleSubmit(); //  final step — submit to backend
                         } else {
-                          setActiveStep((prev) => prev + 1); // ✅ otherwise just go to next step
+                          setActiveStep((prev) => prev + 1); //  otherwise just go to next step
                         }
                       }}
                     >

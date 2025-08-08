@@ -7,17 +7,6 @@ export default function Countrydetails({
   nextStep,
   prevStep,
 }) {
-  //   const country = [
-  //     { value: "1", label: "India" },
-  //     { value: "2", label: "Afghanistan." },
-  //     { value: "3", label: "Albania" },
-  //   ];
-  //   const state = [
-  //     { value: "1", label: "maharashtra" },
-  //     { value: "2", label: "Gujarat" },
-  //     { value: "3", label: "Kerala" },
-  //   ];
-
   const [countryOptions, setCountryOptions] = useState([]);
   const [stateOptions, setStateOptions] = useState([]);
   const { countryId, stateId } = formData.country || {};

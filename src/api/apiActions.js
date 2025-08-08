@@ -1,10 +1,8 @@
-import axios from "axios";
+import axiosInstance from "./axiosInstance";
 
 const API_URL =
-  "https://reactinterviewtask.codetentaclestechnologies.in/api/user";
+  "https://reactinterviewtask.codetentaclestechnologies.in/api/api/user-delete";
 
-export async function deleteUser(id, token) {
-  return axios.delete(`${API_URL}/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export async function deleteUser(id) {
+  return axiosInstance.post(`${API_URL}/${id}`);
 }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const API_URL =
   "https://reactinterviewtask.codetentaclestechnologies.in/api/api/login";
@@ -30,6 +31,7 @@ export function logout() {
   localStorage.removeItem("token");
   localStorage.removeItem("role");
   localStorage.removeItem("user");
+  window.location.href = "/login";
 }
 
 export function getCurrentUser() {
@@ -42,4 +44,20 @@ export function getToken() {
 
 export function getRole() {
   return localStorage.getItem("role");
+}
+
+export function parseJwt(token) {
+  try {
+    return token ? jwtDecode(token) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+export function isTokenValid(token = localStorage.getItem("token")) {
+  const payload = parseJwt(token);
+  if (!payload) return false;
+  const now = Math.floor(Date.now() / 1000);
+
+  return typeof payload.exp === "number" && payload.exp > now + 5;
 }

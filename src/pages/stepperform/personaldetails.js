@@ -1,5 +1,6 @@
 import React from "react";
-export default function personaldetails({ personal, setFormData }) {
+export default function personaldetails({ formData, setFormData }) {
+  const { personal } = formData;
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -108,53 +109,6 @@ export default function personaldetails({ personal, setFormData }) {
                       </label>
                     </div>
                   ))}
-                  {/* <div className="flex items-center">
-                    <input
-                      id="default-radio-1"
-                      type="radio"
-                      value="Male"
-                      name="default-radio"
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-200 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    />
-                    <label
-                      for="default-radio-1"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      Male
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      checked
-                      id="default-radio-2"
-                      type="radio"
-                      value=""
-                      name="default-radio"
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-200 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    />
-                    <label
-                      for="default-radio-2"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      Female
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      checked
-                      id="default-radio-2"
-                      type="radio"
-                      value=""
-                      name="default-radio"
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-200 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    />
-                    <label
-                      for="default-radio-2"
-                      className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >
-                      Others
-                    </label>
-                  </div> */}
                 </div>
               </div>
             </div>
@@ -170,10 +124,10 @@ export default function personaldetails({ personal, setFormData }) {
                 <input
                   className="w-full px-3 py-3 text-sm leading-tight text-gray-700 border border-gray-200 rounded appearance-none focus:outline-none focus:shadow-outline"
                   id="number"
-                  type="number"
+                  type="text"
                   placeholder="Phone Number"
-                  name="phone"
-                  value={personal.phone}
+                  name="phoneNumber"
+                  value={personal.phoneNumber}
                   onChange={handleChange}
                 />
               </div>

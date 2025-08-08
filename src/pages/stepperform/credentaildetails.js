@@ -14,17 +14,6 @@ export default function Credentaildetails({ formData, setFormData }) {
     }));
   };
 
-  //   const validate = () => {
-  //     const newErrs = {};
-  //     if (!cred.email.trim()) newErrs.email = "Email is required";
-  //     if (!cred.password) newErrs.password = "Password is required";
-  //     if (cred.password !== cred.passwordConfirmation) {
-  //       newErrs.passwordConfirmation = "Passwords must match";
-  //     }
-  //     setErrors(newErrs);
-  //     return Object.keys(newErrs).length === 0;
-  //   };
-
   return (
     <>
       <div className="flex   w-full p-2 ">
