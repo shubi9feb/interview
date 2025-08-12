@@ -1,7 +1,10 @@
+// src/pages/product/Addproduct.jsx
 import React, { useState } from "react";
 import Layout from "../../component/Layout";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance.js";
+import { API } from "../../config/apiEndpoints";
+
 export default function Addproduct() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -35,8 +38,16 @@ export default function Addproduct() {
     if (!formData.name.trim()) errs.name = "Product name is required";
     if (!formData.description.trim())
       errs.description = "Description is required";
-    if (!formData.price.trim() || isNaN(formData.price))
-      errs.price = "Valid price is required";
+
+    const priceNum = Number(formData.price);
+    if (
+      !formData.price.toString().trim() ||
+      Number.isNaN(priceNum) ||
+      priceNum <= 0
+    ) {
+      errs.price = "Valid price (> 0) is required";
+    }
+
     if (!formData.image) errs.image = "Product image is required";
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -52,20 +63,43 @@ export default function Addproduct() {
       payload.append("description", formData.description);
       payload.append("price", formData.price);
       payload.append("image", formData.image);
-      payload.append("token", localStorage.getItem("token"));
 
-      // THIS is the API call:
-      const res = await axiosInstance.post("/add-product", payload, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      console.log("ADD PRODUCT RESPONSE:", res.data);
-      if (res.status === 200) {
-        alert("Product added successfully");
+      const token = localStorage.getItem("token");
+      if (token) payload.append("token", token);
+
+      const res = await axiosInstance.post(API.PRODUCTS.ADD, payload);
+
+      console.log("ADD PRODUCT RESPONSE:", res?.data ?? res);
+
+      const data = res?.data ?? {};
+      if (data?.success || res.status === 200 || res.status === 201) {
+        alert(data?.message || "Product added successfully");
+        // navigate back to product listing
         navigate("/Product");
+      } else {
+        const msg =
+          data?.message ||
+          (data?.errors
+            ? JSON.stringify(data.errors)
+            : "Failed to add product");
+        alert(msg);
       }
     } catch (err) {
       console.error("Add product error", err);
-      alert("Failed to add product. Please try again.");
+      // try to extract meaningful message
+      if (err?.response?.data) {
+        const d = err.response.data;
+        if (d?.errors) {
+          const messages = Object.values(d.errors).flat();
+          alert(messages.join("\n"));
+        } else if (d?.message) {
+          alert(d.message);
+        } else {
+          alert(JSON.stringify(d));
+        }
+      } else {
+        alert("Failed to add product. Please try again.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -76,7 +110,7 @@ export default function Addproduct() {
       <Layout>
         <div className="bg-white p-4 mb-2 rounded-lg  dark:border-gray-700 mt-14">
           <div>
-            <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-left dark:hover:text-white text-[1.125rem] font-semibold">
+            <h3 className="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white text-left dark:hover:text-white text-[1.125rem] font-semibold">
               Add Product
             </h3>
           </div>
@@ -85,11 +119,15 @@ export default function Addproduct() {
           <div className="p-4 rounded-lg dark:border-gray-700 ">
             <div className="">
               <div className="w-full ">
-                <form action="/" method="post">
+                <form
+                  action="/"
+                  method="post"
+                  onSubmit={(e) => e.preventDefault()}
+                >
                   <div className="mb-4">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-700 text-left"
-                      for="firstName"
+                      htmlFor="firstName"
                     >
                       Product Name
                     </label>
@@ -101,26 +139,28 @@ export default function Addproduct() {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
+                      disabled={submitting}
                     />
                     {errors.name && (
                       <p className="text-red-600 text-sm">{errors.name}</p>
                     )}
                   </div>
+
                   <div className="mb-4">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-700 text-left"
-                      for="firstName"
+                      htmlFor="firstName"
                     >
                       Product Image
                     </label>
                     <div className="flex items-center justify-center w-full">
                       <label
-                        for="dropzone-file"
-                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                        htmlFor="dropzone-file"
+                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
                       >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                           <svg
-                            className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                            className="w-8 h-8 mb-4 text-gray-500"
                             aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -128,19 +168,19 @@ export default function Addproduct() {
                           >
                             <path
                               stroke="currentColor"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
                               d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                             />
                           </svg>
-                          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                          <p className="mb-2 text-sm text-gray-500">
                             <span className="font-semibold">
                               Click to upload
                             </span>{" "}
                             or drag and drop
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                          <p className="text-xs text-gray-500">
                             SVG, PNG, JPG or GIF (MAX. 800x400px)
                           </p>
                         </div>
@@ -149,7 +189,6 @@ export default function Addproduct() {
                           type="file"
                           className="hidden"
                           accept="image/*"
-                          hidden
                           onChange={handleImageChange}
                           disabled={submitting}
                         />
@@ -161,15 +200,16 @@ export default function Addproduct() {
                           className="ml-4 h-20 w-20 object-cover rounded"
                         />
                       )}
-                    </div>{" "}
+                    </div>
                     {errors.image && (
                       <p className="text-red-600 text-sm">{errors.image}</p>
                     )}
                   </div>
+
                   <div className="mb-4">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-700 text-left"
-                      for="firstName"
+                      htmlFor="firstName"
                     >
                       Description
                     </label>
@@ -187,10 +227,11 @@ export default function Addproduct() {
                       </p>
                     )}
                   </div>
+
                   <div className="mb-4">
                     <label
                       className="block mb-2 text-sm font-medium text-gray-700 text-left"
-                      for="firstName"
+                      htmlFor="price"
                     >
                       Price
                     </label>
@@ -208,18 +249,19 @@ export default function Addproduct() {
                       <p className="text-red-600 text-sm">{errors.price}</p>
                     )}
                   </div>
+
                   <div className="flex justify-between">
                     <Link
                       to="/Product"
                       type="button"
-                      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
                       disabled={submitting}
                     >
                       Back
                     </Link>
                     <button
                       type="button"
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
                       disabled={submitting}
                       onClick={handleSubmit}
                     >

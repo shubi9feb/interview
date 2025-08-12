@@ -1,23 +1,25 @@
-import axios from "axios";
+import { API } from "../config/apiEndpoints.js";
+import axiosInstance from "./axiosInstance";
 import { jwtDecode } from "jwt-decode";
-
-const API_URL =
-  "https://reactinterviewtask.codetentaclestechnologies.in/api/api/login";
 
 export async function login(email, password) {
   try {
-    const response = await axios.post(API_URL, { email, password });
-
+    const response = await axiosInstance.post(API.AUTH.LOGIN, {
+      email,
+      password,
+    });
     console.log("LOGIN RESPONSE:", response);
 
-    const { token, role } = response.data;
+    const data = response.data || {};
+    // adjust depending on backend shape
+    const token = data.token ?? data?.data?.token ?? data?.access_token;
+    const role = data?.data?.role ?? data?.role ?? data?.user?.role;
 
-    if (token) {
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
-    }
+    if (token) localStorage.setItem("token", token);
+    if (role) localStorage.setItem("role", role);
+    if (data?.data) localStorage.setItem("user", JSON.stringify(data.data));
 
-    return response.data;
+    return data;
   } catch (error) {
     console.error(
       "LOGIN ERROR RESPONSE:",
@@ -28,9 +30,7 @@ export async function login(email, password) {
 }
 
 export function logout() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("role");
-  localStorage.removeItem("user");
+  localStorage.clear();
   window.location.href = "/login";
 }
 
@@ -49,7 +49,7 @@ export function getRole() {
 export function parseJwt(token) {
   try {
     return token ? jwtDecode(token) : null;
-  } catch (e) {
+  } catch {
     return null;
   }
 }

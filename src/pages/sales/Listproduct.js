@@ -1,61 +1,93 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Table from "../../component/VTable";
 import Layout from "../../component/Layout";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance.js";
+import { API } from "../../config/apiEndpoints";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // ✅ New states for pagination
+  // server pagination state
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
 
-  // Fetch products from API with page param
-  async function getProducts(currentPage) {
-    const res = await axiosInstance.get(`/product-list?page=${currentPage}`);
-    console.log("Products loaded:", res.data);
-
-    // Adjust according to backend response
-    const data = res.data?.data || res.data || [];
-    const lastPage = res.data?.lastPage || res.data?.meta?.last_page || 1;
-
-    setTotalPages(lastPage);
-
-    // Add serial number based on current page
-    setProducts(
-      data.map((p, idx) => ({
-        srno: (currentPage - 1) * 10 + idx + 1, // ✅ Correct sr no for page
-        id: p.id,
-        name: p.name,
-        price: p.price,
-        description: p.description,
-        image: p.image,
-      }))
-    );
-  }
-
-  // Load products on page change
-  useEffect(() => {
-    async function fetchData() {
+  // fetch wrapper
+  const getProducts = useCallback(
+    async (currentPage = 1, currentPerPage = perPage) => {
+      setIsLoading(true);
       try {
-        setLoading(true);
-        await getProducts(page);
+        const token = localStorage.getItem("token") || "";
+        const res = await axiosInstance.get(API.PRODUCTS.LIST, {
+          headers: { Authorization: `Bearer ${token}` },
+          params: {
+            page: Number(currentPage) || 1,
+            perPage: Number(currentPerPage) || 10,
+          },
+        });
+
+        const payload = res?.data ?? {};
+        const items = payload?.data ?? payload ?? [];
+
+        const serverPerPage = payload?.perPage;
+        const current = payload?.currentPage;
+        const last = payload?.lastPage ?? 1;
+        const total = payload?.total ?? items.length;
+
+        setPerPage(Number(serverPerPage) || Number(currentPerPage) || 10);
+        setTotalPages(Number(last) || 1);
+        setTotalRecords(Number(total) || 0);
+        setPage(Number(current) || Number(currentPage) || 1);
+
+        // Map items into rows expected by VTable
+        setProducts(
+          (items || []).map((p, idx) => ({
+            srno:
+              (Number(current) - 1) *
+                (Number(serverPerPage) || Number(currentPerPage)) +
+              idx +
+              1,
+            id: p.id,
+            name: p.name,
+            price: p.price,
+            description: p.description,
+            image: p.image,
+            raw: p,
+          }))
+        );
       } catch (err) {
         console.error("Failed to load products", err);
+        setProducts([]);
+        setTotalPages(1);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
-    }
-    fetchData();
-  }, [page]); // Re-fetch when page changes
+    },
+    [perPage]
+  );
 
-  //  Pagination handlers
+  // initial load and refetch when page / perPage changes
+  useEffect(() => {
+    getProducts(page, perPage);
+  }, [page, perPage, getProducts]);
+
+  // handlers passed to VTable
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
+    const np = Number(newPage) || 1;
+    if (np < 1) return;
+    // guard: don't go beyond last (optional)
+    if (totalPages && np > totalPages) return;
+    setPage(np);
+  };
+
+  const handleRowsPerPageChange = (newPerPage) => {
+    const np = Number(newPerPage) || 10;
+    setPerPage(np);
+    // when changing per-page, usually reset to first page
+    setPage(1);
   };
 
   const columns = [
@@ -89,7 +121,11 @@ export default function Product() {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (p) => `₹ ${p.price}`,
+      render: (item) => {
+        const priceVal =
+          item?.price ?? (typeof item === "number" ? item : item);
+        return `₹ ${priceVal ?? ""}`;
+      },
     },
   ];
 
@@ -100,6 +136,7 @@ export default function Product() {
           Product
         </h3>
       </div>
+
       <div className="bg-white">
         <div className="p-4 rounded-lg dark:border-gray-700">
           <div className="flex justify-end mb-3 p-2">
@@ -114,11 +151,16 @@ export default function Product() {
           <Table
             cols={columns}
             data={products}
-            isTableLoading={loading}
+            isTableLoading={isLoading}
             page={page}
             totalPages={totalPages}
             handlePageChange={handlePageChange}
+            handleRowsPerPageChange={handleRowsPerPageChange}
           />
+
+          <div className="text-xs text-gray-500 mt-2">
+            Showing page {page} of {totalPages} — total {totalRecords} products
+          </div>
         </div>
       </div>
     </Layout>

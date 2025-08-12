@@ -1,7 +1,10 @@
 import axios from "axios";
 
+const baseURL = process.env.REACT_APP_API_BASE_URL || "";
+
 const instance = axios.create({
-  baseURL: "https://reactinterviewtask.codetentaclestechnologies.in/api/api",
+  baseURL,
+  timeout: Number(process.env.REACT_APP_TIMEOUT) || 10000,
 });
 
 instance.interceptors.request.use((config) => {
